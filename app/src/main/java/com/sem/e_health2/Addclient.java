@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -83,6 +84,8 @@ public class Addclient extends AppCompatActivity {
         ttelephone = findViewById(R.id.phone);
         tage =findViewById(R.id.tele);
         imgProfile =findViewById(R.id.img_profile);
+        photo= BitmapFactory.decodeResource(imgProfile.getResources(),
+                R.drawable.man_ic);
         findViewById(R.id.addc).setOnClickListener((v) ->{
             ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().
                     getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -90,10 +93,11 @@ public class Addclient extends AppCompatActivity {
 
             if (networkInfo == null || !networkInfo.isConnected() || !networkInfo.isAvailable()) { showDialog();}
 
-          else  if (tnom.getText().toString().length() == 0) {   tnom.setError("Name is required!");}
-            else if (tprenom.getText().toString().length() == 0){   tprenom.setError("Last Name  is required!");}
-            else if (tage.getText().toString().length() == 0) {   tage.setError("Age is required!");}
-             else if (ttelephone.getText().toString().length() == 0) {   ttelephone.setError("Phone number is required!");}
+          else  if (tnom.getText().toString().length() == 0 ){   tnom.setError("Name is required!");}
+          else if(  tnom.getText().toString().length() <3 ){   tnom.setError("Name Shold Be More Then 3 Caracteur!");}
+            else if (tprenom.getText().toString().length() == 0  ){   tprenom.setError("Last Name  is required!");}else if(tprenom.getText().toString().length() < 3){   tprenom.setError("Last Name Shold Be More Then 3 Caracteur!");}
+            else if (tage.getText().toString().length() == 0 ){   tage.setError("Age is required!");}else if (tage.getText().toString().length() >2){   tage.setError("Age Should Be between [1..99]");}
+             else if (ttelephone.getText().toString().length() == 0 )  {   ttelephone.setError("Phone number is required!");}else if ( ttelephone.getText().toString().length()<4){ttelephone.setError("Phone Number Should Be Consists Of three numbers Or More  ");}
 
              else {
 

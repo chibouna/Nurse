@@ -51,6 +51,7 @@
             android:layout_marginStart="10dp"
             android:inputType="textPersonName"
             android:layout_marginEnd="10dp"
+
             android:id="@+id/name"/>
 
         <TextView
