@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_log"
+    android:scaleType="fitXY"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="229dp"
+        android:layout_height="138dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="60dp"
+
+        app:srcCompat="@drawable/logo_sign" />
+
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="295dp"
+        android:layout_gravity="center"
+        android:background="@drawable/back_form_login"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edt_email"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:drawableLeft="@drawable/ic_email"
+            android:ems="10"
+            android:layout_marginTop="80dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:inputType="textEmailAddress"
+            android:hint="Email"
+            android:singleLine="true"
+            android:backgroundTint="@color/colorPrimary"
+            />
+
+        <EditText
+            android:id="@+id/edt_password"
+            android:layout_marginTop="20dp"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edt_email"
+            android:hint="Password"
+
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:drawableLeft="@drawable/ic_password"
+            android:backgroundTint="@color/colorPrimary"
+            android:inputType="textPassword" />
+
+        <ImageView
+            android:id="@+id/imageView33"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="-10dp"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/btn_login" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tc_registre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="100dp"
+        android:text="Creat a new account ?"
+        android:textColor="@android:color/background_light" />
+</LinearLayout>

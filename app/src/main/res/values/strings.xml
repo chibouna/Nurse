@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">nurce</string>
+    <string name="title_activity_doctor">DoctorActivity</string>
+    <string name="title_activity_addtest">Addtest</string>
+    <string name="search_for_patient">Search for Patient...</string>
+    <string name="facebook_app_id">3254874254738683</string>
+    <string name="fb_login_protocol_scheme">fb3254874254738683</string>
+</resources>
