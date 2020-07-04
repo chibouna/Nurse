@@ -4,6 +4,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +33,8 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import static com.sem.e_health2.DoctorActivity.changeStatusBarToWhite;
 
 public class Addtest extends AppCompatActivity {
+
+    private static final String TAG = "Addtest";
     List<Test> testList = new ArrayList<>();
     RecAdapter adapter ;
     RecyclerView recyclerview ;
@@ -37,12 +43,14 @@ public class Addtest extends AppCompatActivity {
     DatabaseReference glucRef;
     DatabaseReference hardbeatsRef;
     DatabaseReference emgRef;
+    DatabaseReference patientRef;
     String temp ;
     String emg ;
     String hartbeats ;
     String glucose ;
     String finalDate;
     DatabaseReference testRef ;
+    LodingDialog loadingDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +58,7 @@ public class Addtest extends AppCompatActivity {
         changeStatusBarToWhite(this);
         recyclerview = findViewById(R.id.RC1);
         enableSwipeToDeleteAndUndo();
+         loadingDialog =new LodingDialog(Addtest.this);
 
         adapter = new RecAdapter(this,testList);
        ((SimpleItemAnimator) recyclerview.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -70,6 +79,7 @@ public class Addtest extends AppCompatActivity {
         hardbeatsRef = database.getReference("E-Health/Client live test /"+name+" "+lastname+"/Heart Beats");
         emgRef = database.getReference("E-Health/Client live test /"+name+" "+lastname+"/EMG");
         glucRef = database.getReference("E-Health/Client live test /"+name+" "+lastname+"/Glucose");
+        patientRef = database.getReference("E-Health/Client live test /"+name+" "+lastname);
 
         DatabaseReference myRef = database.getReference("E-Health/Doctors/"+docID+"/Clients TESTS");
         testRef = myRef.child(name+" "+lastname+" TESTS");
@@ -130,14 +140,35 @@ public class Addtest extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(v ->{
-            Test test = new Test();
-            test.setTime(finalDate);
-            test.setTemp(temp);
-            test.setEmg(emg);
-            test.setGlucose(glucose);
-            test.setHartbeats(hartbeats);
-            testRef.child(finalDate).setValue(test);
-            recreate();
+
+            getPatientTests();
+           /* if(temp==null && emg==null){
+
+
+                loadingDialog.StartLodingDialog();
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+             loadingDialog.DismissDialog();
+                }
+            },30000);
+                Toast.makeText(this, " Please Just Wait For a Moment...", Toast.LENGTH_LONG).show();
+
+
+}else{
+                Test test = new Test();
+                test.setTime(finalDate);
+                test.setTemp(temp);
+                test.setEmg(emg);
+                test.setGlucose(glucose);
+                test.setHartbeats(hartbeats);
+                testRef.child(finalDate).setValue(test);
+                recreate();
+            }*/
+
+
+
 
 
 
@@ -223,4 +254,82 @@ public class Addtest extends AppCompatActivity {
         }
     };
 
+    private void getPatientTests(){
+        Log.d(TAG, "onTestClicked: ");
+        loadingDialog.StartLodingDialog();
+
+        patientRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange: "+dataSnapshot.getValue().toString());
+
+                if (dataSnapshot.hasChild("Temp")&&dataSnapshot.hasChild("EMG")&&
+                        dataSnapshot.hasChild("Glucose")&&dataSnapshot.hasChild("Heart Beats")){
+                    Log.d(TAG, "onDataChange: data received");
+                    //finalDate
+
+
+
+                    Test test = new Test();
+                    //test = dataSnapshot.getValue(Test.class);
+                    for(DataSnapshot data : dataSnapshot.getChildren()){
+                        Log.d(TAG, "onDataChange: "+ data.toString());
+                        Log.d(TAG, "onDataChange:value: "+ data.getValue().toString());
+                        if (data.getKey().equals("EMG"))
+                            test.setEmg(data.getValue().toString());
+                        if (data.getKey().equals("Glucose"))
+                            test.setGlucose(data.getValue().toString());
+                        if (data.getKey().equals("Heart Beats"))
+                            test.setHartbeats(data.getValue().toString());
+                        if (data.getKey().equals("Temp"))
+                            test.setTemp(data.getValue().toString());
+                    }
+                    test.setTime(finalDate);
+                    /*test.setTime(finalDate);
+                    test.setTemp(temp);
+                    test.setEmg(emg);
+                    test.setGlucose(glucose);
+                    test.setHartbeats(hartbeats);*/
+                    testRef.child(finalDate).setValue(test);
+                    recreate();
+                    loadingDialog.DismissDialog();
+
+                }else {
+                    Log.d(TAG, "onDataChange: something went wrong");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void onTestClicked(View view) {
+        Log.d(TAG, "onTestClicked: ");
+        loadingDialog.StartLodingDialog();
+
+        patientRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange: "+dataSnapshot.getChildren().toString());
+
+                if (dataSnapshot.hasChild("Temp")&&dataSnapshot.hasChild("EMG")&&
+                        dataSnapshot.hasChild("Glucose")&&dataSnapshot.hasChild("Heart Beats")){
+                    Log.d(TAG, "onDataChange: data received");
+
+                    loadingDialog.DismissDialog();
+
+                }else {
+                    Log.d(TAG, "onDataChange: something went wrong");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 }
