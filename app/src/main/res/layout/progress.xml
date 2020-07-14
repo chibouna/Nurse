@@ -17,13 +17,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             ></ProgressBar>
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Loding..."
-    android:textSize="20dp"
-    android:textStyle="bold"
-    android:layout_marginTop="10dp"></TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Testing..."
+            android:textSize="20dp"
+            android:textStyle="bold"></TextView>
 
 
 

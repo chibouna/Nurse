@@ -44,6 +44,9 @@ public class Addtest extends AppCompatActivity {
     DatabaseReference hardbeatsRef;
     DatabaseReference emgRef;
     DatabaseReference patientRef;
+    String name ;
+    String lastname ;
+    String docID ;
     String temp ;
     String emg ;
     String hartbeats ;
@@ -71,15 +74,15 @@ public class Addtest extends AppCompatActivity {
         recyclerview.setAdapter(adapter);
         recyclerview.setHasFixedSize(true);
         Intent intent = getIntent();
-        String name = intent.getStringExtra("name");
-        String lastname = intent.getStringExtra("lastname");
-        String docID = intent.getStringExtra("docid");
+        name = intent.getStringExtra("name");
+        lastname = intent.getStringExtra("lastname");
+        docID = intent.getStringExtra("docid");
 
         tempRef = database.getReference("E-Health/Client live test /"+name+" "+lastname+"/Temp");
         hardbeatsRef = database.getReference("E-Health/Client live test /"+name+" "+lastname+"/Heart Beats");
         emgRef = database.getReference("E-Health/Client live test /"+name+" "+lastname+"/EMG");
         glucRef = database.getReference("E-Health/Client live test /"+name+" "+lastname+"/Glucose");
-        patientRef = database.getReference("E-Health/Client live test /"+name+" "+lastname);
+        patientRef = database.getReference("E-Health/Client live test ");
 
         DatabaseReference myRef = database.getReference("E-Health/Doctors/"+docID+"/Clients TESTS");
         testRef = myRef.child(name+" "+lastname+" TESTS");
@@ -142,30 +145,7 @@ public class Addtest extends AppCompatActivity {
         fab.setOnClickListener(v ->{
 
             getPatientTests();
-           /* if(temp==null && emg==null){
 
-
-                loadingDialog.StartLodingDialog();
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-             loadingDialog.DismissDialog();
-                }
-            },30000);
-                Toast.makeText(this, " Please Just Wait For a Moment...", Toast.LENGTH_LONG).show();
-
-
-}else{
-                Test test = new Test();
-                test.setTime(finalDate);
-                test.setTemp(temp);
-                test.setEmg(emg);
-                test.setGlucose(glucose);
-                test.setHartbeats(hartbeats);
-                testRef.child(finalDate).setValue(test);
-                recreate();
-            }*/
 
 
 
@@ -194,7 +174,7 @@ public class Addtest extends AppCompatActivity {
                             // set message, title, and icon
                             .setTitle("Delete")
                             .setMessage("Do you want to Delete")
-                            .setIcon(R.drawable.delet1)
+                            .setIcon(R.drawable.delete)
 
                             .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
 
@@ -262,41 +242,39 @@ public class Addtest extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d(TAG, "onDataChange: "+dataSnapshot.getValue().toString());
+             if(dataSnapshot.hasChild(name+" "+lastname)) {
+                 if (dataSnapshot.hasChild(name+" "+lastname+"/Temp") && dataSnapshot.hasChild(name+" "+lastname+"/EMG") &&
+                         dataSnapshot.hasChild(name+" "+lastname+"/Glucose") && dataSnapshot.hasChild(name+" "+lastname+"/Heart Beats")) {
+                     Log.d(TAG, "onDataChange: data received");
 
-                if (dataSnapshot.hasChild("Temp")&&dataSnapshot.hasChild("EMG")&&
-                        dataSnapshot.hasChild("Glucose")&&dataSnapshot.hasChild("Heart Beats")){
-                    Log.d(TAG, "onDataChange: data received");
-                    //finalDate
-
-
-
-                    Test test = new Test();
-                    //test = dataSnapshot.getValue(Test.class);
-                    for(DataSnapshot data : dataSnapshot.getChildren()){
-                        Log.d(TAG, "onDataChange: "+ data.toString());
-                        Log.d(TAG, "onDataChange:value: "+ data.getValue().toString());
-                        if (data.getKey().equals("EMG"))
-                            test.setEmg(data.getValue().toString());
-                        if (data.getKey().equals("Glucose"))
-                            test.setGlucose(data.getValue().toString());
-                        if (data.getKey().equals("Heart Beats"))
-                            test.setHartbeats(data.getValue().toString());
-                        if (data.getKey().equals("Temp"))
-                            test.setTemp(data.getValue().toString());
-                    }
-                    test.setTime(finalDate);
+                     Test test = new Test();
+                     for (DataSnapshot data : dataSnapshot.child(name+" "+lastname).getChildren()) {
+                         Log.d(TAG, "onDataChange: " + data.toString());
+                         Log.d(TAG, "onDataChange:value: " + data.getValue().toString());
+                         if (data.getKey().equals("EMG"))
+                             test.setEmg(data.getValue().toString());
+                         if (data.getKey().equals("Glucose"))
+                             test.setGlucose(data.getValue().toString());
+                         if (data.getKey().equals("Heart Beats"))
+                             test.setHartbeats(data.getValue().toString());
+                         if (data.getKey().equals("Temp"))
+                             test.setTemp(data.getValue().toString());
+                     }
+                     loadingDialog.DismissDialog();
+                     test.setTime(finalDate);
                     /*test.setTime(finalDate);
                     test.setTemp(temp);
                     test.setEmg(emg);
                     test.setGlucose(glucose);
                     test.setHartbeats(hartbeats);*/
-                    testRef.child(finalDate).setValue(test);
-                    recreate();
-                    loadingDialog.DismissDialog();
+                     testRef.child(finalDate).setValue(test);
+                     recreate();
 
-                }else {
-                    Log.d(TAG, "onDataChange: something went wrong");
-                }
+
+                 } else {
+                     Log.d(TAG, "onDataChange: something went wrong");
+                 }
+             }
             }
 
             @Override

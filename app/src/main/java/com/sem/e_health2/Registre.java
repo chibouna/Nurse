@@ -3,8 +3,10 @@ package com.sem.e_health2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +15,20 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.angmarch.views.NiceSpinner;
+import org.angmarch.views.OnSpinnerItemSelectedListener;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,12 +38,17 @@ import static com.sem.e_health2.DoctorActivity.changeStatusBarToWhite;
 public class Registre extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference dbRef;
     ImageView BtRegistre ;
     EditText user ;
     EditText email ;
     EditText password ;
     EditText confirmPassword;
     TextView login ;
+    String item ;
+    public static NiceSpinner niceSpinner;
+
 
 
     @Override
@@ -50,6 +71,38 @@ public class Registre extends AppCompatActivity {
         password = findViewById(R.id.edt_password2);
         confirmPassword =findViewById(R.id.edt_password_confirm);
         user= findViewById(R.id.edt_username2);
+        List<String> spinnerArray =  new ArrayList<>();
+
+        dbRef = database.getReference("E-Health/Doctors");
+        dbRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                        niceSpinner = findViewById(R.id.nice_spinner);
+                        for(DataSnapshot data : dataSnapshot.getChildren()) {
+
+                            spinnerArray.add(data.getKey());
+
+                        }
+                        niceSpinner.attachDataSource(spinnerArray);
+                        niceSpinner.setOnSpinnerItemSelectedListener(new OnSpinnerItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(NiceSpinner parent, View view, int position, long id) {
+                                // This example uses String, but your type can be any
+                                item = parent.getItemAtPosition(position).toString();
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // on error
+                    }
+                });
+
 
 
 
@@ -69,6 +122,7 @@ public class Registre extends AppCompatActivity {
 
             Intent intent = new Intent(Registre.this,DoctorActivity.class);
             intent.putExtra("user",user.getText().toString());
+            intent.putExtra("doc",item);
             startActivity(intent);
         }
 

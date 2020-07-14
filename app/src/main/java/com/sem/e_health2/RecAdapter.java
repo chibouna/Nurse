@@ -50,7 +50,7 @@ public class RecAdapter extends RecyclerView.Adapter<RecAdapter.RecViewHolder> {
     }
 
     public void removeItem(int position, DatabaseReference testRef) {
-        list.remove(position +1);
+        list.remove(position+1);
         Test test = list.get((position));
         String t = test.getTime() ;
         testRef.child(t).removeValue();

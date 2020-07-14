@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
@@ -26,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import static com.sem.e_health2.DoctorActivity.changeStatusBarToWhite;
+import static com.sem.e_health2.DoctorActivity.prefs1;
 
 public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -67,8 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         if(currentUser != null){
-
-            startActivity(new Intent(MainActivity.this,DoctorActivity.class));
+            Intent intent = new Intent(MainActivity.this,DoctorActivity.class);
+            intent.putExtra("share", true);
+            startActivity(intent);
         }
 
     }
@@ -113,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
       else  if (email.getText().toString().length() == 0){   email.setError("Email is required!");}
         else if (password.getText().toString().length() == 0) {   password.setError("Password is required!");}
         else {
+
 
             mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                     .addOnCompleteListener(this, task -> {
