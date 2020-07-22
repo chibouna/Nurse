@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,12 +18,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -94,14 +89,14 @@ public class Addclient extends AppCompatActivity {
             if (networkInfo == null || !networkInfo.isConnected() || !networkInfo.isAvailable()) { showDialog();}
 
           else  if (tnom.getText().toString().length() == 0 ){   tnom.setError("Name is required!");}
-          else if(  tnom.getText().toString().length() <3 ){   tnom.setError("Name Shold Be More Then 3 Caracteur!");}
-            else if (tprenom.getText().toString().length() == 0  ){   tprenom.setError("Last Name  is required!");}else if(tprenom.getText().toString().length() < 3){   tprenom.setError("Last Name Shold Be More Then 3 Caracteur!");}
-            else if (tage.getText().toString().length() == 0 ){   tage.setError("Age is required!");}else if (tage.getText().toString().length() >2){   tage.setError("Age Should Be between [1..99]");}
-             else if (ttelephone.getText().toString().length() == 0 )  {   ttelephone.setError("Phone number is required!");}else if ( ttelephone.getText().toString().length()<4){ttelephone.setError("Phone Number Should Be Consists Of three numbers Or More  ");}
+          else if(  tnom.getText().toString().length() <5 ){   tnom.setError("name should be more than 5 characters!");}
+            else if (tprenom.getText().toString().length() == 0  ){   tprenom.setError("Last Name  is required!");}else if(tprenom.getText().toString().length() < 5){   tprenom.setError("name should be more than 5 characters!");}
+            else if (tage.getText().toString().length() == 0 ){   tage.setError("Age is required!");}else if (Integer.parseInt(tage.getText().toString()) < 1 || Integer.parseInt(tage.getText().toString()) > 99){   tage.setError("Age Should Be between [1..99]");}
+             else if (ttelephone.getText().toString().length() == 0 )  {   ttelephone.setError("Phone number is required!");}else if ( ttelephone.getText().toString().length()<8){ttelephone.setError("Phone Number Should Be Consists Of eight numbers");}
 
              else {
 
-                    Client et = new Client();
+                    Patient et = new Patient();
                     et.setName(tnom.getText().toString());
                     et.setLastName(tprenom.getText().toString());
                     et.setPhone(ttelephone.getText().toString());
@@ -201,7 +196,7 @@ public class Addclient extends AppCompatActivity {
 
         }
     }
-    private void uploadImage( Client client) {
+    private void uploadImage( Patient patient) {
         String Photoname = UUID.randomUUID().toString();
         final StorageReference riversRef = mStorageRef.child("images/" + Photoname);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -212,8 +207,8 @@ public class Addclient extends AppCompatActivity {
                 .addOnSuccessListener(taskSnapshot ->
                         riversRef.getDownloadUrl().addOnSuccessListener(uri -> {
                     Log.d("urlPhotoTest",uri.toString());
-                    client.setImageUri(uri.toString());
-                    clienRef.child(client.getName()+" "+client.getLastName()).setValue(client);
+                    patient.setImageUri(uri.toString());
+                    clienRef.child(patient.getName()+" "+ patient.getLastName()).setValue(patient);
 
 
                     }));

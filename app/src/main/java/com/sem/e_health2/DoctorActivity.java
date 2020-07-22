@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,7 +52,7 @@ public class DoctorActivity extends AppCompatActivity implements ContactAdapter.
     TextView tvdocusername;
     RelativeLayout rl;
     RecyclerView recyclerview ;
-    List<Client> listData= new ArrayList<>();
+    List<Patient> listData= new ArrayList<>();
     public static SharedPreferences.Editor editor ;
     public static SharedPreferences prefs1;
      boolean firstStart;
@@ -109,17 +111,18 @@ public class DoctorActivity extends AppCompatActivity implements ContactAdapter.
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 docteurName = (String) dataSnapshot.getValue();
+                delRf = database.getReference("E-Health/Doctors/"+docteurName);
                 DatabaseReference myRef = database.getReference("E-Health/Doctors/"+docteurName+"/Clients");
                 myRef.addValueEventListener(new ValueEventListener() {
                     @SuppressLint("RestrictedApi")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Client client ;
+                        Patient patient;
                         listData.clear();
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            client = ds.getValue(Client.class);
-                            if (client != null) {
-                                listData.add(client);
+                            patient = ds.getValue(Patient.class);
+                            if (patient != null) {
+                                listData.add(patient);
 
                             }
 
@@ -149,7 +152,7 @@ public class DoctorActivity extends AppCompatActivity implements ContactAdapter.
             }
         });
 
-        delRf = database.getReference("E-Health/Doctors/"+docteurName);
+
         docUsername.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -196,10 +199,10 @@ public class DoctorActivity extends AppCompatActivity implements ContactAdapter.
     }
     private void filter(String text) {
         //new array list that will hold the filtered data
-        ArrayList<Client> filterdNames = new ArrayList<>();
+        ArrayList<Patient> filterdNames = new ArrayList<>();
 
         //looping through existing elements
-        for (Client s : listData) {
+        for (Patient s : listData) {
             //if the existing elements contains the search input
             if (s.getnamaLastName().toLowerCase().contains(text.toLowerCase())) {
                 //adding the element to filtered list
@@ -229,8 +232,15 @@ public class DoctorActivity extends AppCompatActivity implements ContactAdapter.
 
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 final int position = viewHolder.getAdapterPosition();
-                                Adapter.removeItem(position,delRf);
-                                dialog.dismiss();
+                                if (position+1 == listData.size()){
+                                    Toast.makeText(DoctorActivity.this, "Can't delete last Patient", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                    startActivity(getIntent());
+                                }
+                                else {
+                                    Adapter.removeItem(position, delRf);
+                                    dialog.dismiss();
+                                }
                             }
 
                         })

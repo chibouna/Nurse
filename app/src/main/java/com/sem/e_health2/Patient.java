@@ -1,6 +1,6 @@
 package com.sem.e_health2;
 
-public class Client {
+public class Patient {
     private   String name;
     private String lastName;
     private String phone;
@@ -8,13 +8,13 @@ public class Client {
     private String imageUri;
     private String namaLastName;
 
-    public Client(String name, String lastName, String phone, String age) {
+    public Patient(String name, String lastName, String phone, String age) {
         this.name = name;
         this.lastName = lastName;
         this.phone = phone;
         this.age = age;
     }
-    public Client(String name, String lastName, String phone, String age, String imageUri) {
+    public Patient(String name, String lastName, String phone, String age, String imageUri) {
         this.name = name;
         this.lastName = lastName;
         this.phone = phone;
@@ -34,7 +34,7 @@ public class Client {
         this.imageUri = imageUri;
     }
 
-    public Client() {
+    public Patient() {
     }
 
     public String getName() {
