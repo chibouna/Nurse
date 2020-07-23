@@ -142,30 +142,36 @@ public class Addtest extends AppCompatActivity {
 
         fab.setOnClickListener(v ->{
             loadingDialog.StartLodingDialog();
-            ok.observe(this, new Observer<Boolean>() {
-                @Override
-                public void onChanged(Boolean aBoolean) {
-                    if(aBoolean) {
-                        loadingDialog.DismissDialog();
-                        Test test = new Test();
-                        test.setTime(finalDate);
-                        test.setTemp(temp);
-                        test.setEmg(emg);
-                        test.setGlucose(glucose);
-                        test.setHartbeats(hartbeats);
-                        testRef.child(finalDate).setValue(test);
-                        if (Integer.parseInt(test.getGlucose()) < 80 ){notifyGlucosepRef.child("Value").setValue("The Glucose of "+name+" "+lastname+" is Low");}
-                        else if (Integer.parseInt(test.getGlucose()) > 160){notifyGlucosepRef.child("Value").setValue("The Glucose of "+name+" "+lastname+" is High");}
+            ok.observe(this, aBoolean -> {
+                if(aBoolean) {
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Do something after 5s = 5000ms
+                            loadingDialog.DismissDialog();;
+                            Test test = new Test();
+                            test.setTime(finalDate);
+                            test.setTemp(temp);
+                            test.setEmg(emg);
+                            test.setGlucose(glucose);
+                            test.setHartbeats(hartbeats);
+                            testRef.child(finalDate).setValue(test);
+                            if (Double.valueOf(test.getGlucose()) < 80 ){notifyGlucosepRef.child("Value").setValue("The Glucose of "+name+" "+lastname+" is Low");}
+                            else if (Double.valueOf(test.getGlucose()) > 160){notifyGlucosepRef.child("Value").setValue("The Glucose of "+name+" "+lastname+" is High");}
 
-                        if (Integer.parseInt(test.getHartbeats()) < 60 ){notifyHeartbeatsRef.child("Value").setValue("The Heartbeats of "+name+" "+lastname+" is Low");}
-                        else if (Integer.parseInt(test.getHartbeats()) > 100){notifyHeartbeatsRef.child("Value").setValue("The Heartbeats of "+name+" "+lastname+" is High");}
+                            if (Double.valueOf(test.getHartbeats()) < 60 ){notifyHeartbeatsRef.child("Value").setValue("The Heartbeats of "+name+" "+lastname+" is Low");}
+                            else if (Double.valueOf(test.getHartbeats()) > 100){notifyHeartbeatsRef.child("Value").setValue("The Heartbeats of "+name+" "+lastname+" is High");}
 
-                        if (Integer.parseInt(test.getTemp()) < 35 ){notifyTempRef.child("Value").setValue("The Temperature of "+name+" "+lastname+" is Low");}
-                        else if (Integer.parseInt(test.getTemp()) > 38){notifyTempRef.child("Value").setValue("The temperature of "+name+" "+lastname+" is High");}
-                        recreate();
-                    }
+                            if (Double.valueOf(test.getTemp()) < 35 ){notifyTempRef.child("Value").setValue("The Temperature of "+name+" "+lastname+" is Low");}
+                            else if (Double.valueOf(test.getTemp()) > 38.9){notifyTempRef.child("Value").setValue("The temperature of "+name+" "+lastname+" is High");}
+                            recreate();
+                        }
+                    }, 5000);
+
 
                 }
+
             });
 
         });
